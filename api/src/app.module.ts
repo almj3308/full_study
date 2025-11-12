@@ -5,10 +5,12 @@ import { ClientModule } from './client/client.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseService } from './shared/utils/database/database.service';
 import configuration from './shared/configs/configuration';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
     ClientModule,
+    SharedModule,
 
     ConfigModule.forRoot({
       isGlobal: true,

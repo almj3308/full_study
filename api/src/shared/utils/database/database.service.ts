@@ -42,4 +42,32 @@ export class DatabaseService {
       connection.release();
     }
   }
+
+  async insertTransaction(sqls: string[], params: any[]) {
+    console.log('sqls', params);
+    const connection = await this.getConnection();
+    try {
+      // beginTransaction = 트랜잭션을 시작함
+      await connection.beginTransaction();
+
+      const [results1]: any = await connection.query(sqls[0], params[0]);
+      params[1] = [...params[1], results1.insertId];
+      const [results2]: any = await connection.query(sqls[1], params[1]);
+
+      // commit
+      await connection.commit();
+
+      return {
+        status: 'ok',
+        message: '트랜잭션 성공',
+      };
+    } catch (e) {
+      // 커넥션 되돌림
+      await connection.rollback();
+      throw e;
+    } finally {
+      // 커넥션 종료
+      connection.release();
+    }
+  }
 }
